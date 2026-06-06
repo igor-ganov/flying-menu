@@ -8,23 +8,17 @@ import {
   DEFAULT_STORAGE_KEY,
 } from './core/constants'
 import { cornerPosition } from './core/corner-position'
-import {
-  idle,
-  onDown,
-  onMove,
-  onUp,
-  wasTap,
-  type DragState,
-} from './core/drag'
+import { idle, onDown, onMove, onUp, wasTap, type DragState } from './core/drag'
+import { indexOfActive } from './core/focus-cycle/index-of-active'
+import { nextIndex } from './core/focus-cycle/next-index'
+import { tabStep } from './core/focus-cycle/tab-step'
+import { isActivationKey } from './core/keyboard/is-activation-key'
 import { menuPosition } from './core/menu-position'
-import {
-  loadCorner,
-  localStoragePort,
-  saveCorner,
-  type StoragePort,
-} from './core/persist'
+import { loadCorner, localStoragePort, saveCorner, type StoragePort } from './core/persist'
 import { snapToCorner } from './core/snap-to-corner'
 import type { Corner, Point, Rect, Size, Viewport } from './core/types'
+import { branch } from './fp/branch'
+import { when } from './fp/when'
 import { styles } from './styles'
 import {
   EVENT_CORNER,
@@ -35,9 +29,8 @@ import {
   TAG_NAME,
 } from './test-ids'
 
-// Use the document element's client box, which excludes the scrollbar gutter,
-// so a corner inset is symmetric and never tucks under a vertical scrollbar
-// (globalThis.innerWidth includes the scrollbar width).
+// Use the document element's client box, which excludes the scrollbar gutter, so a
+// corner inset is symmetric and never tucks under a vertical scrollbar.
 const viewport = (): Viewport => {
   const doc = globalThis.document?.documentElement
   return {
@@ -105,12 +98,11 @@ export class FlyingMenu extends LitElement {
 
   public override connectedCallback(): void {
     super.connectedCallback()
-    if (!this._cornerInitialized && !this.noPersist) {
+    when(!this._cornerInitialized && !this.noPersist, () => {
       this.corner = loadCorner(this._storage, this.storageKey)
-    }
+    })
     this._cornerInitialized = true
-    // The trigger is always on screen, so it must re-anchor on every viewport change,
-    // open or not — otherwise it drifts from its corner on resize.
+    // The trigger is always on screen, so it must re-anchor on every viewport change.
     globalThis.addEventListener('resize', this._onResize)
   }
 
@@ -164,23 +156,24 @@ export class FlyingMenu extends LitElement {
   }
 
   protected override updated(changed: PropertyValues<this>): void {
-    if (changed.has('corner') || changed.has('margin')) {
+    when(changed.has('corner') || changed.has('margin'), () => {
       this._positionTrigger()
-      if (changed.has('corner')) this._onCornerChanged()
-    }
-    if (changed.has('open')) this._onOpenChanged()
+      when(changed.has('corner'), () => this._onCornerChanged())
+    })
+    when(changed.has('open'), () => this._onOpenChanged())
   }
 
   // — positioning —
 
   private _positionTrigger(point?: Point): void {
     const el = this._triggerEl
-    if (!el) return
-    const pos =
-      point ??
-      cornerPosition(this.corner, toSize(el.getBoundingClientRect()), this.margin, viewport())
-    el.style.left = `${pos.x}px`
-    el.style.top = `${pos.y}px`
+    when(el != null, () => {
+      const pos =
+        point ??
+        cornerPosition(this.corner, toSize(el.getBoundingClientRect()), this.margin, viewport())
+      el.style.left = `${pos.x}px`
+      el.style.top = `${pos.y}px`
+    })
   }
 
   /** The trigger's logical resting rect: measured size at its corner anchor. */
@@ -193,108 +186,132 @@ export class FlyingMenu extends LitElement {
   private _positionMenu(): void {
     const menuEl = this._menuEl
     const triggerEl = this._triggerEl
-    if (!menuEl || !triggerEl) return
-    const vp = viewport()
-    // Anchor to the trigger's resting position, not its live (possibly mid-transition)
-    // box, so the menu never anchors to where the trigger is animating away from.
-    const pos = menuPosition({
-      corner: this.corner,
-      triggerRect: this._triggerAnchorRect(vp),
-      menuSize: toSize(menuEl.getBoundingClientRect()),
-      gap: this.gap,
-      margin: this.margin,
-      vp,
+    when(menuEl != null && triggerEl != null, () => {
+      const vp = viewport()
+      // Anchor to the trigger's resting position, not its live (possibly mid-transition)
+      // box, so the menu never anchors to where the trigger is animating away from.
+      const pos = menuPosition({
+        corner: this.corner,
+        triggerRect: this._triggerAnchorRect(vp),
+        menuSize: toSize(menuEl.getBoundingClientRect()),
+        gap: this.gap,
+        margin: this.margin,
+        vp,
+      })
+      menuEl.style.left = `${pos.x}px`
+      menuEl.style.top = `${pos.y}px`
     })
-    menuEl.style.left = `${pos.x}px`
-    menuEl.style.top = `${pos.y}px`
   }
 
   // — pointer drag —
 
   private readonly _onPointerDown = (e: PointerEvent): void => {
-    if (e.button !== 0) return
-    const el = this._triggerEl
-    const rect = el.getBoundingClientRect()
-    this._drag = onDown(this._drag, {
-      pointer: { x: e.clientX, y: e.clientY },
-      origin: { x: rect.x, y: rect.y },
+    when(e.button === 0, () => {
+      const el = this._triggerEl
+      const rect = el.getBoundingClientRect()
+      this._drag = onDown(this._drag, {
+        pointer: { x: e.clientX, y: e.clientY },
+        origin: { x: rect.x, y: rect.y },
+      })
+      this._dragging = true
+      el.setPointerCapture(e.pointerId)
     })
-    this._dragging = true
-    el.setPointerCapture(e.pointerId)
   }
 
   private readonly _onPointerMove = (e: PointerEvent): void => {
-    if (!this._drag.dragging) return
-    this._drag = onMove(this._drag, {
-      pointer: { x: e.clientX, y: e.clientY },
-      threshold: this.dragThreshold,
+    when(this._drag.dragging, () => {
+      this._drag = onMove(this._drag, {
+        pointer: { x: e.clientX, y: e.clientY },
+        threshold: this.dragThreshold,
+      })
+      this._positionTrigger(this._drag.current)
     })
-    this._positionTrigger(this._drag.current)
   }
 
   private readonly _onPointerUp = (e: PointerEvent): void => {
-    if (!this._drag.dragging) return
+    when(this._drag.dragging, () => this._finishDrag(e))
+  }
+
+  private _finishDrag(e: PointerEvent): void {
     const finished = onUp(this._drag)
     this._drag = finished
     this._dragging = false
-    if (this._triggerEl.hasPointerCapture(e.pointerId)) {
+    when(this._triggerEl.hasPointerCapture(e.pointerId), () =>
       this._triggerEl.releasePointerCapture(e.pointerId)
-    }
-    if (wasTap(finished)) {
-      this._positionTrigger() // undo any sub-threshold offset — snap back to the corner
-      this.toggle()
-      return
-    }
-    const next = snapToCorner({ x: e.clientX, y: e.clientY }, viewport())
-    if (next === this.corner) {
-      this._positionTrigger() // same corner: re-anchor immediately (no reactive change to drive it)
-    } else {
-      this.corner = next // a corner change re-anchors via updated()
-    }
+    )
+    branch(
+      wasTap(finished),
+      () => {
+        this._positionTrigger() // undo any sub-threshold offset — snap back to the corner
+        this.toggle()
+      },
+      () => this._settleCorner(snapToCorner({ x: e.clientX, y: e.clientY }, viewport()))
+    )
+  }
+
+  private _settleCorner(next: Corner): void {
+    branch(
+      next === this.corner,
+      () => this._positionTrigger(), // same corner: re-anchor immediately
+      () => {
+        this.corner = next // a corner change re-anchors via updated()
+      }
+    )
   }
 
   private readonly _onTriggerKeydown = (e: KeyboardEvent): void => {
-    if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') {
+    when(isActivationKey(e.key), () => {
       e.preventDefault()
       this.toggle()
-    }
+    })
   }
 
   // — open/close —
 
   private _setOpen(next: boolean): void {
-    if (next === this.open) return
-    const allowed = this.dispatchEvent(
-      new CustomEvent(EVENT_TOGGLE, {
-        detail: { open: next },
-        bubbles: true,
-        composed: true,
-        cancelable: true,
+    when(next !== this.open, () => {
+      const allowed = this.dispatchEvent(
+        new CustomEvent(EVENT_TOGGLE, {
+          detail: { open: next },
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        })
+      )
+      when(allowed, () => {
+        this.open = next
       })
-    )
-    if (!allowed) return
-    this.open = next
+    })
   }
 
   private _onOpenChanged(): void {
     this._applyAria()
-    if (this.open) this._internals.states.add('open')
-    else this._internals.states.delete('open')
-    if (this.open) {
-      this._positionMenu()
-      this._addGlobalListeners()
-      this._focusMenu()
-    } else {
-      this._removeGlobalListeners()
-      if (this._restoreFocusOnClose) {
-        this._restoreFocusOnClose = false
-        this._focusTrigger()
-      }
-    }
+    branch(
+      this.open,
+      () => this._internals.states.add('open'),
+      () => this._internals.states.delete('open')
+    )
+    branch(
+      this.open,
+      () => {
+        this._positionMenu()
+        this._addGlobalListeners()
+        this._focusMenu()
+      },
+      () => this._onClosed()
+    )
+  }
+
+  private _onClosed(): void {
+    this._removeGlobalListeners()
+    when(this._restoreFocusOnClose, () => {
+      this._restoreFocusOnClose = false
+      this._focusTrigger()
+    })
   }
 
   private _onCornerChanged(): void {
-    if (this.open) this._positionMenu()
+    when(this.open, () => this._positionMenu())
     this.dispatchEvent(
       new CustomEvent(EVENT_CORNER, {
         detail: { corner: this.corner },
@@ -302,7 +319,7 @@ export class FlyingMenu extends LitElement {
         composed: true,
       })
     )
-    if (!this.noPersist) saveCorner(this._storage, this.storageKey, this.corner)
+    when(!this.noPersist, () => saveCorner(this._storage, this.storageKey, this.corner))
   }
 
   // — accessibility —
@@ -319,37 +336,45 @@ export class FlyingMenu extends LitElement {
 
   private _slottedTrigger(): HTMLElement | undefined {
     const [first] = this._assignedElements('trigger')
-    return first instanceof HTMLElement ? first : undefined
+    return [first].filter((el): el is HTMLElement => el instanceof HTMLElement)[0]
   }
 
   /**
    * Place the menu's ARIA contract on the slotted trigger when it is itself a
-   * control; otherwise promote the wrapper to a button. Keeps `aria-expanded`
-   * in sync with open state. Avoids redundant ARIA on a roleless wrapper (AC-6.1).
+   * control; otherwise promote the wrapper to a button. Avoids redundant ARIA on
+   * a roleless wrapper (AC-6.1).
    */
   private _applyAria(): void {
     const slotted = this._slottedTrigger()
-    const onSlotted = slotted !== undefined && isFocusable(slotted)
-    const target = onSlotted ? slotted : this._triggerEl
-    if (!target) return
+    branch(
+      slotted !== undefined && isFocusable(slotted),
+      () => {
+        this._clearAria(this._triggerEl)
+        this._setMenuAria(slotted)
+      },
+      () => {
+        this._promoteWrapper()
+        this._clearAria(slotted)
+        this._setMenuAria(this._triggerEl)
+      }
+    )
+  }
 
-    if (!onSlotted) {
-      target.setAttribute('role', 'button')
-      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '0')
-      this._clearAria(slotted)
-    } else {
-      this._clearAria(this._triggerEl)
-    }
+  private _promoteWrapper(): void {
+    const el = this._triggerEl
+    el.setAttribute('role', 'button')
+    when(!el.hasAttribute('tabindex'), () => el.setAttribute('tabindex', '0'))
+  }
 
-    target.setAttribute('aria-haspopup', 'menu')
-    target.setAttribute('aria-controls', MENU_ID)
-    target.setAttribute('aria-expanded', String(this.open))
+  private _setMenuAria(el: HTMLElement | undefined): void {
+    el?.setAttribute('aria-haspopup', 'menu')
+    el?.setAttribute('aria-controls', MENU_ID)
+    el?.setAttribute('aria-expanded', String(this.open))
   }
 
   private _clearAria(el: Element | undefined): void {
-    if (!el) return
     for (const attr of ['aria-haspopup', 'aria-controls', 'aria-expanded', 'role']) {
-      el.removeAttribute(attr)
+      el?.removeAttribute(attr)
     }
   }
 
@@ -359,30 +384,31 @@ export class FlyingMenu extends LitElement {
 
   private _focusMenu(): void {
     const menuEl = this._menuEl
-    if (!menuEl) return
-    const target = firstFocusableAmong(this._assignedElements('menu')) ?? menuEl
-    if (target === menuEl && !menuEl.hasAttribute('tabindex')) {
-      menuEl.tabIndex = -1
-    }
-    target.focus()
+    when(menuEl != null, () => {
+      const target = firstFocusableAmong(this._assignedElements('menu')) ?? menuEl
+      when(target === menuEl && !menuEl.hasAttribute('tabindex'), () => {
+        menuEl.tabIndex = -1
+      })
+      target.focus()
+    })
   }
 
   /**
    * Keep Tab focus cycling through the menu's focusables while open. Browsers
-   * (notably WebKit) do not reliably continue sequential focus through slotted
-   * shadow content, so the menu manages it explicitly — a focus trap exited via
-   * Escape. Arrow-key navigation stays the consumer's responsibility.
+   * (notably WebKit) do not reliably continue native sequential focus through
+   * slotted shadow content, so the menu manages it — a focus trap exited via Escape.
    */
   private readonly _onMenuKeydown = (e: KeyboardEvent): void => {
-    if (e.key !== 'Tab') return
+    when(e.key === 'Tab', () => this._cycleFocus(e))
+  }
+
+  private _cycleFocus(e: KeyboardEvent): void {
     const items = focusablesAmong(this._assignedElements('menu'))
-    if (items.length === 0) return
-    e.preventDefault()
-    const active = this._deepActiveElement()
-    const current = active instanceof HTMLElement ? items.indexOf(active) : -1
-    const step = e.shiftKey ? -1 : 1
-    const next = (current + step + items.length) % items.length
-    items[next]?.focus()
+    when(items.length > 0, () => {
+      e.preventDefault()
+      const current = indexOfActive(items, this._deepActiveElement())
+      items[nextIndex(current, tabStep(e.shiftKey), items.length)]?.focus()
+    })
   }
 
   private _deepActiveElement(): Element | undefined {
@@ -394,22 +420,22 @@ export class FlyingMenu extends LitElement {
   // — global listeners (only while open) —
 
   private readonly _onDocPointerDown = (e: Event): void => {
-    if (!e.composedPath().includes(this)) this.closeMenu()
+    when(!e.composedPath().includes(this), () => this.closeMenu())
   }
 
   private readonly _onDocKeydown = (e: KeyboardEvent): void => {
-    if (e.key === 'Escape') {
+    when(e.key === 'Escape', () => {
       this._restoreFocusOnClose = true
       this.closeMenu()
-    }
+    })
   }
 
   private readonly _onResize = (): void => {
     this._positionTrigger()
-    if (this.open) this._positionMenu()
+    when(this.open, () => this._positionMenu())
   }
 
-  // Dismissal listeners are open-only; the resize listener is always-on (see connectedCallback).
+  // Dismissal listeners are open-only; the resize listener is always-on (connectedCallback).
   private _addGlobalListeners(): void {
     globalThis.addEventListener('pointerdown', this._onDocPointerDown, true)
     globalThis.addEventListener('keydown', this._onDocKeydown)

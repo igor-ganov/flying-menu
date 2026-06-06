@@ -43,4 +43,11 @@ export default tseslint.config(
       'functional/no-this-expressions': 'error',
     },
   },
+  // — the LitElement file is the imperative framework boundary: it stays branch-free
+  //   (no if/ternary) but is exempt from max-lines, since a cohesive custom-element
+  //   class cannot be split below 50 lines. —
+  {
+    files: ['src/flying-menu.ts'],
+    rules: { 'max-lines': 'off' },
+  },
 )
