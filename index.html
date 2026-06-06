@@ -107,6 +107,14 @@
         ).join('')
       }
 
+      // Force a reserved vertical scrollbar to exercise viewport/scrollbar math.
+      if (params.has('tall')) {
+        document.documentElement.style.overflowY = 'scroll'
+        const spacer = document.createElement('div')
+        spacer.style.height = '300vh'
+        document.body.appendChild(spacer)
+      }
+
       if (params.has('corner')) menu.setAttribute('corner', params.get('corner'))
       if (params.has('no-persist')) menu.setAttribute('no-persist', '')
       if (params.has('storage-key')) menu.setAttribute('storage-key', params.get('storage-key'))

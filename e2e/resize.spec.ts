@@ -25,6 +25,25 @@ test('the trigger re-anchors to its corner on resize while closed', async ({ pag
     .toEqual({ right: 760 - MARGIN, bottom: 540 - MARGIN })
 })
 
+test('the right inset is measured from the content edge, not under the scrollbar', async ({ page }) => {
+  await page.setViewportSize({ width: 900, height: 600 })
+  await page.goto('/?no-persist&corner=bottom-right&tall') // tall body => vertical scrollbar
+  await ready(page)
+  const vp = await page.evaluate(() => ({
+    inner: window.innerWidth,
+    client: document.documentElement.clientWidth,
+  }))
+  // The trigger's right edge sits a full margin in from the *content* width.
+  const pos = await inlinePos(triggerWrapper(page))
+  const b = await box(triggerWrapper(page))
+  expect(Math.round(pos.left + b.width)).toBe(vp.client - MARGIN)
+  // When the scrollbar reserves space, this is strictly inside innerWidth - margin
+  // (the old, buggy behaviour put it under the scrollbar).
+  if (vp.client < vp.inner) {
+    expect(pos.left + b.width).toBeLessThan(vp.inner - MARGIN)
+  }
+})
+
 test('a top-left trigger stays pinned to the margin across resizes', async ({ page }) => {
   await page.setViewportSize({ width: 1000, height: 700 })
   await page.goto('/?no-persist&corner=top-left')

@@ -8,13 +8,10 @@ document
   .querySelector<HTMLButtonElement>('[data-demo-open]')
   ?.addEventListener('click', () => demo?.openMenu())
 
-/** Restart the demo at a chosen corner. */
+/** Move the trigger to a chosen corner. Opening/closing stays with the trigger itself. */
 for (const button of document.querySelectorAll<HTMLButtonElement>('[data-corner]')) {
   button.addEventListener('click', () => {
     const corner = button.dataset.corner
-    if (demo && corner) {
-      demo.setAttribute('corner', corner)
-      demo.openMenu()
-    }
+    if (demo && corner) demo.setAttribute('corner', corner)
   })
 }

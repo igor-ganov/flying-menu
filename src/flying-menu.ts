@@ -35,10 +35,16 @@ import {
   TAG_NAME,
 } from './test-ids'
 
-const viewport = (): Viewport => ({
-  width: globalThis.innerWidth,
-  height: globalThis.innerHeight,
-})
+// Use the document element's client box, which excludes the scrollbar gutter,
+// so a corner inset is symmetric and never tucks under a vertical scrollbar
+// (globalThis.innerWidth includes the scrollbar width).
+const viewport = (): Viewport => {
+  const doc = globalThis.document?.documentElement
+  return {
+    width: doc?.clientWidth || globalThis.innerWidth,
+    height: doc?.clientHeight || globalThis.innerHeight,
+  }
+}
 
 const toSize = (rect: DOMRect): Size => ({ width: rect.width, height: rect.height })
 
