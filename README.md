@@ -13,6 +13,8 @@ draggable, corner-snapping floating menu — the reusable extraction of the
   outside-click, keyboard activation, `prefers-reduced-motion`.
 - 💾 **Persists** the chosen corner to `localStorage`.
 
+**▶ Live demo:** https://igor-ganov.github.io/flying-menu/
+
 ## Install
 
 ```sh
