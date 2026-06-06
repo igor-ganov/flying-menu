@@ -2,6 +2,45 @@ import functional from 'eslint-plugin-functional'
 import unicorn from 'eslint-plugin-unicorn'
 import tseslint from 'typescript-eslint'
 
+// Custom rule: at most N non-import, non-comment, non-blank lines (rule 1 — "50
+// excluding imports", which the built-in max-lines cannot express since it counts imports).
+const local = {
+  rules: {
+    'max-lines-no-imports': {
+      meta: { type: 'suggestion', schema: [{ type: 'integer' }] },
+      create(context) {
+        const max = context.options[0] ?? 50
+        const sc = context.sourceCode
+        return {
+          'Program:exit'(program) {
+            const importLines = new Set()
+            for (const stmt of program.body) {
+              if (stmt.type !== 'ImportDeclaration') continue
+              for (let l = stmt.loc.start.line; l <= stmt.loc.end.line; l++) importLines.add(l)
+            }
+            const count = sc.lines.filter((text, i) => {
+              const t = text.trim()
+              return (
+                t !== '' &&
+                !importLines.has(i + 1) &&
+                !t.startsWith('//') &&
+                !t.startsWith('*') &&
+                !t.startsWith('/*')
+              )
+            }).length
+            if (count > max) {
+              context.report({
+                loc: { line: 1, column: 0 },
+                message: `File has ${count} code lines (excluding imports); max ${max}.`,
+              })
+            }
+          },
+        }
+      },
+    },
+  },
+}
+
 // Bans control-flow branching: only `switch` / strategy maps / Match are allowed.
 const noBranching = {
   'no-restricted-syntax': [
@@ -22,10 +61,10 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
-    plugins: { unicorn },
+    plugins: { unicorn, local },
     rules: {
       ...noBranching,
-      'max-lines': ['error', { max: 50, skipBlankLines: true, skipComments: true }],
+      'local/max-lines-no-imports': ['error', 50],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       'unicorn/filename-case': ['error', { case: 'kebabCase' }],
     },
@@ -42,12 +81,5 @@ export default tseslint.config(
       'functional/no-classes': 'error',
       'functional/no-this-expressions': 'error',
     },
-  },
-  // — the LitElement file is the imperative framework boundary: it stays branch-free
-  //   (no if/ternary) but is exempt from max-lines, since a cohesive custom-element
-  //   class cannot be split below 50 lines. —
-  {
-    files: ['src/flying-menu.ts'],
-    rules: { 'max-lines': 'off' },
   },
 )
