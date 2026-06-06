@@ -16,6 +16,9 @@ playwright/.cache/
 .setting/
 excalidraw.log
 
+# Personal Claude Code overrides (broad local permissions)
+.claude/settings.local.json
+
 # Editor / OS
 .DS_Store
 Thumbs.db
