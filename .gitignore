@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-example/
+*.tsbuildinfo
+
+# Test artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Tooling logs / scratch
+.setting/
+excalidraw.log
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

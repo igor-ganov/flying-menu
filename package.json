@@ -1,0 +1,41 @@
+{
+  "name": "flying-menu",
+  "version": "0.1.0",
+  "description": "Headless, draggable corner-snapping flying menu as a Lit web component",
+  "type": "module",
+  "main": "./dist/flying-menu.js",
+  "module": "./dist/flying-menu.js",
+  "types": "./dist/flying-menu.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/flying-menu.d.ts",
+      "import": "./dist/flying-menu.js"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": ["**/flying-menu.ts", "**/define.ts"],
+  "scripts": {
+    "dev": "vite",
+    "dev:example": "vite --config vite.example.config.ts",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "build:example": "vite build --config vite.example.config.ts",
+    "preview:example": "vite preview --config vite.example.config.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "keywords": ["lit", "web-component", "menu", "headless", "draggable", "fab", "accessible"],
+  "license": "MIT",
+  "dependencies": {
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.49.1",
+    "happy-dom": "^16.5.3",
+    "typescript": "^5.7.3",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}

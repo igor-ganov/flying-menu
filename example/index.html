@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>flying-menu — headless draggable corner menu</title>
+    <meta
+      name="description"
+      content="A headless, framework-agnostic Lit web component: a draggable, corner-snapping floating menu with two slots."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#content">Skip to content</a>
+
+    <main id="content">
+      <header class="hero">
+        <p class="eyebrow">Lit web component · headless · accessible</p>
+        <h1>&lt;flying-menu&gt;</h1>
+        <p class="lede">
+          A floating menu the user can <strong>drag into any screen corner</strong>. The
+          popup opens from that corner with the right spacing — for any button or menu
+          size. You bring two slots; the component owns the behaviour, not the look.
+        </p>
+        <p class="cta-row">
+          <a class="btn" href="https://github.com/PForever/flying-menu">View on GitHub</a>
+          <button class="btn btn-ghost" type="button" data-demo-open>Open the menu →</button>
+        </p>
+        <p class="hint" data-testid="hint">
+          Try it: drag the round button to a corner, then tap it. Resize the window — it
+          stays in its corner.
+        </p>
+      </header>
+
+      <section class="features" aria-label="Features">
+        <article><h2>Drag &amp; snap</h2><p>Drag the trigger anywhere; it snaps to the nearest corner and remembers it.</p></article>
+        <article><h2>Edge-aware popup</h2><p>The menu anchors to the trigger's corner and stays inside the viewport — computed from measured geometry.</p></article>
+        <article><h2>Headless</h2><p>No imposed colours, borders or sizes. Style your slots and the <code>::part()</code> wrappers.</p></article>
+        <article><h2>Accessible</h2><p>ARIA on your control, focus management, <kbd>Esc</kbd>, outside-click, reduced-motion.</p></article>
+      </section>
+
+      <section class="usage" aria-label="Usage">
+        <h2>Usage</h2>
+        <pre><code>&lt;flying-menu&gt;
+  &lt;button slot="trigger" aria-label="Open menu"&gt;☰&lt;/button&gt;
+  &lt;nav slot="menu" aria-label="Primary"&gt;
+    &lt;a href="/home"&gt;Home&lt;/a&gt;
+    &lt;a href="/docs"&gt;Docs&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/flying-menu&gt;
+
+&lt;script type="module"&gt;import 'flying-menu'&lt;/script&gt;</code></pre>
+        <p>
+          Switch the starting corner to see the popup re-anchor:
+          <span class="corner-buttons" role="group" aria-label="Starting corner">
+            <button type="button" data-corner="top-left">top-left</button>
+            <button type="button" data-corner="top-right">top-right</button>
+            <button type="button" data-corner="bottom-left">bottom-left</button>
+            <button type="button" data-corner="bottom-right">bottom-right</button>
+          </span>
+        </p>
+      </section>
+    </main>
+
+    <!-- The live component. Visuals come entirely from this page's CSS. -->
+    <flying-menu id="demo" corner="bottom-right" storage-key="flying-menu-example">
+      <button slot="trigger" class="fab" aria-label="Open navigation" data-testid="trigger">
+        <span class="fab-bar"></span><span class="fab-bar"></span><span class="fab-bar"></span>
+      </button>
+      <nav slot="menu" class="popup" aria-label="Demo navigation" data-testid="menu">
+        <a href="#content" data-testid="item-overview">Overview</a>
+        <a href="#" data-testid="item-features">Features</a>
+        <a href="#" data-testid="item-usage">Usage</a>
+        <a href="https://github.com/PForever/flying-menu">GitHub ↗</a>
+      </nav>
+    </flying-menu>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
