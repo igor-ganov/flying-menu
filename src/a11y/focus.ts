@@ -32,19 +32,28 @@ export const firstFocusable = (root: ParentNode): HTMLElement | undefined => {
 }
 
 /**
- * Find the first tabbable element among a list of roots, checking each root
- * itself before its descendants. Used to reach focusables inside slotted
- * (light-DOM) menu content.
+ * Collect every tabbable element among a list of roots in DOM order, checking
+ * each root itself before its descendants. Used to drive keyboard navigation
+ * through slotted (light-DOM) menu content.
+ * @param roots - Candidate root elements (e.g. a slot's assigned elements).
+ * @returns Tabbable elements in order (possibly empty).
+ */
+export const focusablesAmong = (roots: readonly Element[]): readonly HTMLElement[] => {
+  const found: HTMLElement[] = []
+  for (const root of roots) {
+    if (root instanceof HTMLElement && isFocusable(root)) found.push(root)
+    for (const el of root.querySelectorAll<HTMLElement>(FOCUSABLE)) {
+      if (isTabbable(el)) found.push(el)
+    }
+  }
+  return found
+}
+
+/**
+ * Find the first tabbable element among a list of roots.
  * @param roots - Candidate root elements (e.g. a slot's assigned elements).
  * @returns The first tabbable element, or `undefined` when none exists.
  */
 export const firstFocusableAmong = (
   roots: readonly Element[]
-): HTMLElement | undefined => {
-  for (const root of roots) {
-    if (root instanceof HTMLElement && isFocusable(root)) return root
-    const inner = firstFocusable(root)
-    if (inner) return inner
-  }
-  return undefined
-}
+): HTMLElement | undefined => focusablesAmong(roots)[0]

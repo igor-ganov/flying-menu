@@ -116,6 +116,10 @@ is disabled automatically under `prefers-reduced-motion: reduce`.
   promoted to `role="button"`. Always provide an accessible name on your trigger.
 - The menu content's role is **yours** to choose (`nav`, `menu`, `listbox`, …) — the
   component only manages opening, focus entry, and dismissal.
+- While open, **Tab / Shift+Tab cycle through the menu's focusable items** (wrapping at
+  the ends) and `Escape` leaves the menu. This works consistently across browsers,
+  including WebKit, which otherwise drops focus out of slotted shadow content. Arrow-key
+  navigation (for a `role="menu"`) remains yours to add.
 
 ## Architecture
 

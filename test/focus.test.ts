@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { firstFocusable, firstFocusableAmong } from '../src/a11y/focus'
+import { firstFocusable, firstFocusableAmong, focusablesAmong } from '../src/a11y/focus'
 
 const html = (markup: string): HTMLElement => {
   const host = document.createElement('div')
@@ -49,5 +49,27 @@ describe('firstFocusableAmong (slotted roots)', () => {
   it('returns undefined when no root contains a focusable', () => {
     const roots = els('<p>x</p><span>y</span>')
     expect(firstFocusableAmong(roots)).toBeUndefined()
+  })
+})
+
+describe('focusablesAmong', () => {
+  const els = (markup: string): Element[] => {
+    const host = document.createElement('div')
+    host.innerHTML = markup
+    return [...host.children]
+  }
+
+  it('collects every tabbable in DOM order', () => {
+    const roots = els('<nav><a href="#1" id="a">1</a><a href="#2" id="b">2</a><a href="#3" id="c">3</a></nav>')
+    expect(focusablesAmong(roots).map((el) => el.id)).toEqual(['a', 'b', 'c'])
+  })
+
+  it('includes a focusable root itself and skips opted-out items', () => {
+    const roots = els('<button id="self">s</button><div><input id="ok"><button disabled>no</button></div>')
+    expect(focusablesAmong(roots).map((el) => el.id)).toEqual(['self', 'ok'])
+  })
+
+  it('returns an empty list when nothing is focusable', () => {
+    expect(focusablesAmong(els('<p>x</p>'))).toEqual([])
   })
 })

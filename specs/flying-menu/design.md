@@ -205,6 +205,11 @@ Lit `LitElement`, reactive props per §2. Responsibilities only:
   `role="button"` + `tabindex="0"` (detected via slot `assignedElements`).
 - Focus order: open → first focusable in menu; Escape → close + focus trigger; outside
   interaction → close (focus left as-is per AC-6.4).
+- **Tab focus trap (AC-6.2a):** while open, a `keydown` handler on the menu wrapper
+  intercepts Tab / Shift+Tab and moves focus through `focusablesAmong(menu slot)` with
+  wraparound. This is required because WebKit does not continue native sequential focus
+  through slotted shadow content after a programmatic focus — Tab would jump out of the
+  component after the first item. The trap is exited via Escape (closes + restores focus).
 - Motion respects `prefers-reduced-motion`.
 - axe audit in E2E for open & closed states (AC-6.7).
 - Live-region/announcement: not required; native focus move announces the menu.

@@ -28,6 +28,20 @@ test('opening moves focus into the menu (AC-6.2)', async ({ page }) => {
   expect(await activeTestId(page)).toBe('item-home')
 })
 
+test('Tab cycles focus through the menu items and wraps (AC-6.2)', async ({ page }) => {
+  await triggerWrapper(page).click()
+  await expect(page.locator('flying-menu')).toHaveAttribute('open', '')
+  expect(await activeTestId(page)).toBe('item-home')
+  await page.keyboard.press('Tab')
+  expect(await activeTestId(page)).toBe('item-docs')
+  await page.keyboard.press('Tab')
+  expect(await activeTestId(page)).toBe('item-about')
+  await page.keyboard.press('Tab') // wraps back to the first
+  expect(await activeTestId(page)).toBe('item-home')
+  await page.keyboard.press('Shift+Tab') // reverse wraps to the last
+  expect(await activeTestId(page)).toBe('item-about')
+})
+
 test('Escape closes the menu and restores focus to the trigger (AC-6.3)', async ({ page }) => {
   await page.locator('[slot="trigger"]').focus()
   await page.keyboard.press('Enter')

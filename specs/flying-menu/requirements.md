@@ -110,6 +110,10 @@ As a keyboard and screen-reader user, I want full, correct access to the menu.
   reflecting open state, and `aria-controls` referencing the menu element id.
 - AC-6.2 — WHEN the menu opens THE SYSTEM SHALL move focus to the first focusable
   element inside the menu (or the menu container if none).
+- AC-6.2a — WHILE the menu is open THE SYSTEM SHALL cycle Tab / Shift+Tab focus
+  through the menu's focusable elements (wrapping at the ends), independent of the
+  browser's native sequential focus through slotted shadow content. (Arrow-key
+  navigation remains the consumer's responsibility.)
 - AC-6.3 — WHEN the user presses `Escape` WHILE the menu is open THE SYSTEM SHALL
   close the menu and return focus to the trigger.
 - AC-6.4 — WHEN a pointer/focus interaction occurs outside both slots WHILE the menu

@@ -1,6 +1,6 @@
 import { html, LitElement, type PropertyValues } from 'lit'
 import { customElement, property, query, state } from 'lit/decorators.js'
-import { firstFocusableAmong, isFocusable } from './a11y/focus'
+import { firstFocusableAmong, focusablesAmong, isFocusable } from './a11y/focus'
 import {
   DEFAULT_DRAG_THRESHOLD,
   DEFAULT_GAP,
@@ -147,7 +147,12 @@ export class FlyingMenu extends LitElement {
       >
         <slot name="trigger" @slotchange=${this._onTriggerSlotChange}></slot>
       </div>
-      <div id=${MENU_ID} part=${PART_MENU} ?data-open=${this.open}>
+      <div
+        id=${MENU_ID}
+        part=${PART_MENU}
+        ?data-open=${this.open}
+        @keydown=${this._onMenuKeydown}
+      >
         <slot name="menu"></slot>
       </div>
     `
@@ -360,6 +365,30 @@ export class FlyingMenu extends LitElement {
       menuEl.tabIndex = -1
     }
     target.focus()
+  }
+
+  /**
+   * Keep Tab focus cycling through the menu's focusables while open. Browsers
+   * (notably WebKit) do not reliably continue sequential focus through slotted
+   * shadow content, so the menu manages it explicitly — a focus trap exited via
+   * Escape. Arrow-key navigation stays the consumer's responsibility.
+   */
+  private readonly _onMenuKeydown = (e: KeyboardEvent): void => {
+    if (e.key !== 'Tab') return
+    const items = focusablesAmong(this._assignedElements('menu'))
+    if (items.length === 0) return
+    e.preventDefault()
+    const active = this._deepActiveElement()
+    const current = active instanceof HTMLElement ? items.indexOf(active) : -1
+    const step = e.shiftKey ? -1 : 1
+    const next = (current + step + items.length) % items.length
+    items[next]?.focus()
+  }
+
+  private _deepActiveElement(): Element | undefined {
+    let active = globalThis.document?.activeElement ?? undefined
+    while (active?.shadowRoot?.activeElement) active = active.shadowRoot.activeElement
+    return active ?? undefined
   }
 
   // — global listeners (only while open) —

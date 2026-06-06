@@ -156,6 +156,8 @@ router.afterEach(() => menu.value?.closeMenu())
 - The component keeps `aria-expanded` in sync, moves focus into the menu on open,
   closes on `Escape` (restoring focus to the trigger) and on an outside click, and
   honours `prefers-reduced-motion`.
+- While the menu is open, **Tab and Shift+Tab move through its items** and wrap around;
+  `Escape` exits. (Arrow-key navigation, if you want a `role="menu"`, is up to you.)
 - Choose the right role for your menu content (`nav` for navigation, `role="menu"` with
   `role="menuitem"` children for an actions menu, etc.).
 
