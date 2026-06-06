@@ -15,17 +15,17 @@ import {
   onUp,
   wasTap,
   type DragState,
-} from './core/drag-machine'
+} from './core/drag'
 import { menuPosition } from './core/menu-position'
 import {
   loadCorner,
   localStoragePort,
   saveCorner,
   type StoragePort,
-} from './core/persist-corner'
+} from './core/persist'
 import { snapToCorner } from './core/snap-to-corner'
 import type { Corner, Point, Rect, Size, Viewport } from './core/types'
-import { styles } from './flying-menu.styles'
+import { styles } from './styles'
 import {
   EVENT_CORNER,
   EVENT_TOGGLE,

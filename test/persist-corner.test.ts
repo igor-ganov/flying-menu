@@ -1,10 +1,11 @@
 import { describe, expect, it, vi } from 'vitest'
+import { isNone, some } from '../src/fp/option/option'
 import {
   loadCorner,
   parseCorner,
   saveCorner,
   type StoragePort,
-} from '../src/core/persist-corner'
+} from '../src/core/persist'
 
 const memoryPort = (initial?: string): StoragePort => {
   let value = initial
@@ -19,15 +20,15 @@ const memoryPort = (initial?: string): StoragePort => {
 const KEY = 'flying-menu-corner'
 
 describe('parseCorner', () => {
-  it('accepts valid corners', () => {
-    expect(parseCorner('top-left')).toBe('top-left')
-    expect(parseCorner('bottom-right')).toBe('bottom-right')
+  it('accepts valid corners as Some', () => {
+    expect(parseCorner('top-left')).toStrictEqual(some('top-left'))
+    expect(parseCorner('bottom-right')).toStrictEqual(some('bottom-right'))
   })
 
-  it('rejects invalid or missing values', () => {
-    expect(parseCorner('middle')).toBeUndefined()
-    expect(parseCorner(undefined)).toBeUndefined()
-    expect(parseCorner('')).toBeUndefined()
+  it('rejects invalid or missing values as None', () => {
+    expect(isNone(parseCorner('middle'))).toBe(true)
+    expect(isNone(parseCorner(undefined))).toBe(true)
+    expect(isNone(parseCorner(''))).toBe(true)
   })
 })
 

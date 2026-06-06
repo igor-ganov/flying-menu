@@ -1,0 +1,8 @@
+export type { None, Option, Some } from './option'
+export { isNone, isSome, none, some } from './option'
+export { map } from './map'
+export { flatMap } from './flat-map'
+export { getOrElse } from './get-or-else'
+export { getOrUndefined } from './get-or-undefined'
+export { filterToOption } from './filter-to-option'
+export { fromNullable } from './from-nullable'

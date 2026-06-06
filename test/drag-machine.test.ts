@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { idle, onDown, onMove, onUp, wasTap } from '../src/core/drag-machine'
+import { idle, onDown, onMove, onUp, wasTap } from '../src/core/drag'
 
 const THRESHOLD = 10
 const origin = { x: 100, y: 200 }
