@@ -17,17 +17,27 @@ draggable, corner-snapping floating menu — the reusable extraction of the
 
 ## Install
 
+**npm**
+
 ```sh
-# npm
 npm install @igor-ganov/flying-menu
+```
 
-# pnpm
+**pnpm**
+
+```sh
 pnpm add @igor-ganov/flying-menu
+```
 
-# yarn
+**yarn**
+
+```sh
 yarn add @igor-ganov/flying-menu
+```
 
-# bun
+**bun**
+
+```sh
 bun add @igor-ganov/flying-menu
 ```
 
