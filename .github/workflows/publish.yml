@@ -23,10 +23,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22 # >= 22.14 required
-          registry-url: https://registry.npmjs.org
+          # No registry-url: it would write a token-auth .npmrc that disables OIDC.
       - name: Use npm >= 11.5.1 (Trusted Publishing)
         run: npm install -g npm@latest
       - run: bun install --frozen-lockfile
       # `prepublishOnly` runs typecheck + lint + unit tests + build first.
-      # OIDC handles auth; provenance is generated automatically.
-      - run: npm publish --access public
+      # OIDC handles auth (no token); provenance is generated automatically.
+      - run: |
+          npm --version
+          npm publish --access public
