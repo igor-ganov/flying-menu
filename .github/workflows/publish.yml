@@ -30,5 +30,6 @@ jobs:
       # `prepublishOnly` runs typecheck + lint + unit tests + build first.
       # OIDC handles auth (no token); provenance is generated automatically.
       - run: |
-          npm --version
+          echo "npm: $(npm --version)"
+          test -n "$ACTIONS_ID_TOKEN_REQUEST_URL" && echo "OIDC env: present" || echo "OIDC env: ABSENT"
           npm publish --access public
