@@ -41,6 +41,9 @@
 
       <section class="usage" aria-label="Usage">
         <h2>Usage</h2>
+
+        <h3>Simplest</h3>
+        <p>Headless: bring any trigger and any menu, the component does the rest.</p>
         <pre><code>&lt;flying-menu&gt;
   &lt;button slot="trigger" aria-label="Open menu"&gt;☰&lt;/button&gt;
   &lt;nav slot="menu" aria-label="Primary"&gt;
@@ -49,7 +52,7 @@
   &lt;/nav&gt;
 &lt;/flying-menu&gt;
 
-&lt;script type="module"&gt;import 'flying-menu'&lt;/script&gt;</code></pre>
+&lt;script type="module"&gt;import '@igor-ganov/flying-menu'&lt;/script&gt;</code></pre>
         <p>
           Move the trigger to a corner (then open it with the trigger to see the
           popup re-anchor):
@@ -60,6 +63,78 @@
             <button type="button" data-corner="bottom-right">bottom-right</button>
           </span>
         </p>
+
+        <h3>This page's floating button — full recipe</h3>
+        <p>
+          Everything behind the button you're looking at: the gradient FAB, the
+          hamburger&nbsp;→&nbsp;✕ morph and the styled popup. Drop in the HTML, CSS
+          and TS — no other dependencies.
+        </p>
+
+        <p><strong>HTML</strong></p>
+        <pre><code>&lt;flying-menu corner="bottom-right"&gt;
+  &lt;button slot="trigger" class="fab" aria-label="Open navigation"&gt;
+    &lt;span class="fab-bar"&gt;&lt;/span&gt;
+    &lt;span class="fab-bar"&gt;&lt;/span&gt;
+    &lt;span class="fab-bar"&gt;&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;nav slot="menu" class="popup" aria-label="Navigation"&gt;
+    &lt;a href="#home"&gt;Home&lt;/a&gt;
+    &lt;a href="#docs"&gt;Docs&lt;/a&gt;
+    &lt;a href="#about"&gt;About&lt;/a&gt;
+  &lt;/nav&gt;
+&lt;/flying-menu&gt;</code></pre>
+
+        <p><strong>CSS</strong></p>
+        <pre><code>flying-menu { --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+/* Round gradient FAB */
+.fab {
+  position: relative;
+  width: 56px; height: 56px;
+  border: none; border-radius: 50%;
+  background: linear-gradient(135deg, #5b8cff, #8b5cf6);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
+  cursor: pointer; padding: 0;
+}
+.fab:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Hamburger ↔ X (three centre-anchored bars) */
+.fab-bar {
+  position: absolute; top: 50%; left: 50%;
+  width: 24px; height: 2px; margin: -1px 0 0 -12px;
+  border-radius: 1px; background: #fff;
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 160ms ease;
+}
+.fab-bar:nth-child(1) { transform: translateY(-7px) rotate(0); }
+.fab-bar:nth-child(2) { transform: rotate(0); }
+.fab-bar:nth-child(3) { transform: translateY(7px) rotate(0); }
+flying-menu[open] .fab-bar:nth-child(1) { transform: translateY(0) rotate(45deg); }
+flying-menu[open] .fab-bar:nth-child(2) { opacity: 0; transform: rotate(45deg); }
+flying-menu[open] .fab-bar:nth-child(3) { transform: translateY(0) rotate(-45deg); }
+@media (prefers-reduced-motion: reduce) { .fab-bar { transition: none; } }
+
+/* Popup (styled via the ::part hook) */
+flying-menu::part(menu) {
+  background: #161b26;
+  border: 1px solid #2b3242;
+  border-radius: 14px;
+  padding: 0.5rem;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.55);
+  min-width: 13rem;
+}
+.popup { display: flex; flex-direction: column; }
+.popup a {
+  color: #e6e9ef; text-decoration: none;
+  padding: 0.6rem 0.8rem; border-radius: 9px;
+}
+.popup a:hover, .popup a:focus-visible {
+  background: #1e2533;
+  outline: 2px solid #5b8cff; outline-offset: -2px;
+}</code></pre>
+
+        <p><strong>TypeScript</strong></p>
+        <pre><code>import '@igor-ganov/flying-menu'</code></pre>
       </section>
     </main>
 
