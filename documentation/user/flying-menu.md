@@ -18,7 +18,7 @@ you supply the button and the menu, it supplies the behaviour.
 </flying-menu>
 
 <script type="module">
-  import 'flying-menu'
+  import '@igor-ganov/flying-menu'
 </script>
 ```
 
@@ -111,7 +111,7 @@ menu.addEventListener('flying-menu-toggle', (e) => {
 
 ```vue
 <script setup>
-import 'flying-menu'
+import '@igor-ganov/flying-menu'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 const menu = ref()
@@ -146,7 +146,7 @@ router.afterEach(() => menu.value?.closeMenu())
 </flying-menu>
 
 <script>
-  import 'flying-menu'
+  import '@igor-ganov/flying-menu'
 </script>
 ```
 

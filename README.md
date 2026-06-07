@@ -18,7 +18,7 @@ draggable, corner-snapping floating menu — the reusable extraction of the
 ## Install
 
 ```sh
-bun add flying-menu lit
+bun add @igor-ganov/flying-menu lit
 ```
 
 ## Usage
@@ -33,7 +33,7 @@ bun add flying-menu lit
 </flying-menu>
 
 <script type="module">
-  import 'flying-menu'
+  import '@igor-ganov/flying-menu'
 </script>
 ```
 
