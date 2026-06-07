@@ -122,6 +122,7 @@ kbd {
 flying-menu { --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
 
 .fab {
+  position: relative;
   width: 56px;
   height: 56px;
   border-radius: 50%;
@@ -129,13 +130,36 @@ flying-menu { --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
   cursor: pointer;
-  display: grid;
-  place-content: center;
-  gap: 5px;
   padding: 0;
 }
 .fab:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
-.fab-bar { display: block; width: 22px; height: 2px; border-radius: 2px; background: #fff; }
+
+/* Hamburger ↔ X: three bars anchored at the center, spread by translateY. The
+   transform function list matches in both states, so it interpolates cleanly. */
+.fab-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 2px;
+  margin: -1px 0 0 -12px;
+  border-radius: 1px;
+  background: #fff;
+  transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 160ms ease;
+}
+.fab-bar:nth-child(1) { transform: translateY(-7px) rotate(0); }
+.fab-bar:nth-child(2) { transform: rotate(0); }
+.fab-bar:nth-child(3) { transform: translateY(7px) rotate(0); }
+
+/* `open` reflects onto the host; the bars are its light-DOM descendants. */
+flying-menu[open] .fab-bar:nth-child(1) { transform: translateY(0) rotate(45deg); }
+flying-menu[open] .fab-bar:nth-child(2) { opacity: 0; transform: rotate(45deg); }
+flying-menu[open] .fab-bar:nth-child(3) { transform: translateY(0) rotate(-45deg); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fab-bar { transition: none; }
+}
 
 flying-menu::part(menu) {
   background: var(--surface);
