@@ -41,10 +41,10 @@
   },
   "scripts": {
     "dev": "vite",
-    "dev:example": "vite --config vite.example.config.ts",
+    "dev:example": "bun run build && vite --config vite.example.config.ts",
     "build": "vite build && tsc -p tsconfig.build.json && rollup -c rollup.dts.config.js && bun run clean:types",
     "clean:types": "node -e \"require('node:fs').rmSync('.types',{recursive:true,force:true})\"",
-    "build:example": "vite build --config vite.example.config.ts",
+    "build:example": "bun run build && vite build --config vite.example.config.ts",
     "preview:example": "vite preview --config vite.example.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",

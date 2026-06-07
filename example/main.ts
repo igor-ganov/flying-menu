@@ -1,5 +1,5 @@
-import '../src/flying-menu'
-import type { FlyingMenu } from '../src/flying-menu'
+import '@igor-ganov/flying-menu'
+import type { FlyingMenu } from '@igor-ganov/flying-menu'
 
 const demo = document.querySelector<FlyingMenu>('#demo')
 
