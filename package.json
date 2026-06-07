@@ -1,6 +1,6 @@
 {
   "name": "@igor-ganov/flying-menu",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Headless, draggable corner-snapping flying menu as a Lit web component",
   "type": "module",
   "license": "MIT",
