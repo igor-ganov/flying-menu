@@ -18,8 +18,11 @@ draggable, corner-snapping floating menu — the reusable extraction of the
 ## Install
 
 ```sh
-bun add @igor-ganov/flying-menu lit
+bun add @igor-ganov/flying-menu
 ```
+
+`lit` comes along as a dependency — no separate install. (It stays a single shared
+copy if your app already uses Lit.)
 
 ## Usage
 

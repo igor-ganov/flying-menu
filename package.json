@@ -1,6 +1,6 @@
 {
   "name": "@igor-ganov/flying-menu",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Headless, draggable corner-snapping flying menu as a Lit web component",
   "type": "module",
   "license": "MIT",
@@ -53,8 +53,8 @@
     "test:e2e": "playwright test",
     "prepublishOnly": "bun run typecheck && bun run lint && bun run test && bun run build"
   },
-  "peerDependencies": {
-    "lit": "^3.0.0"
+  "dependencies": {
+    "lit": "^3.2.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
@@ -63,7 +63,6 @@
     "eslint-plugin-functional": "^10.0.0",
     "eslint-plugin-unicorn": "^64.0.0",
     "happy-dom": "^16.5.3",
-    "lit": "^3.2.1",
     "rollup": "^4.61.1",
     "rollup-plugin-dts": "^6.4.1",
     "typescript": "^5.7.3",
