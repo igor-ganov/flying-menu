@@ -3,6 +3,27 @@
   "version": "0.1.0",
   "description": "Headless, draggable corner-snapping flying menu as a Lit web component",
   "type": "module",
+  "license": "MIT",
+  "author": "igor-ganov",
+  "homepage": "https://igor-ganov.github.io/flying-menu/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/igor-ganov/flying-menu.git"
+  },
+  "bugs": {
+    "url": "https://github.com/igor-ganov/flying-menu/issues"
+  },
+  "keywords": [
+    "lit",
+    "web-component",
+    "custom-element",
+    "menu",
+    "headless",
+    "draggable",
+    "fab",
+    "accessible",
+    "a11y"
+  ],
   "main": "./dist/flying-menu.js",
   "module": "./dist/flying-menu.js",
   "types": "./dist/flying-menu.d.ts",
@@ -10,26 +31,30 @@
     ".": {
       "types": "./dist/flying-menu.d.ts",
       "import": "./dist/flying-menu.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": ["dist"],
-  "sideEffects": ["**/flying-menu.ts", "**/define.ts"],
+  "sideEffects": ["./dist/flying-menu.js"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "vite",
     "dev:example": "vite --config vite.example.config.ts",
-    "build": "vite build && tsc --emitDeclarationOnly",
+    "build": "vite build && tsc -p tsconfig.build.json && rollup -c rollup.dts.config.js && bun run clean:types",
+    "clean:types": "node -e \"require('node:fs').rmSync('.types',{recursive:true,force:true})\"",
     "build:example": "vite build --config vite.example.config.ts",
     "preview:example": "vite preview --config vite.example.config.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "prepublishOnly": "bun run typecheck && bun run lint && bun run test && bun run build"
   },
-  "keywords": ["lit", "web-component", "menu", "headless", "draggable", "fab", "accessible"],
-  "license": "MIT",
-  "dependencies": {
-    "lit": "^3.2.1"
+  "peerDependencies": {
+    "lit": "^3.0.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
@@ -38,6 +63,9 @@
     "eslint-plugin-functional": "^10.0.0",
     "eslint-plugin-unicorn": "^64.0.0",
     "happy-dom": "^16.5.3",
+    "lit": "^3.2.1",
+    "rollup": "^4.61.1",
+    "rollup-plugin-dts": "^6.4.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.60.1",
     "vite": "^6.0.7",
