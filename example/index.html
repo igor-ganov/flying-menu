@@ -44,7 +44,7 @@
 
         <h3>Simplest</h3>
         <p>Headless: bring any trigger and any menu, the component does the rest.</p>
-        <pre><code>&lt;flying-menu&gt;
+        <pre><code class="language-html">&lt;flying-menu&gt;
   &lt;button slot="trigger" aria-label="Open menu"&gt;☰&lt;/button&gt;
   &lt;nav slot="menu" aria-label="Primary"&gt;
     &lt;a href="/home"&gt;Home&lt;/a&gt;
@@ -72,7 +72,7 @@
         </p>
 
         <p><strong>HTML</strong></p>
-        <pre><code>&lt;flying-menu corner="bottom-right"&gt;
+        <pre><code class="language-html">&lt;flying-menu corner="bottom-right"&gt;
   &lt;button slot="trigger" class="fab" aria-label="Open navigation"&gt;
     &lt;span class="fab-bar"&gt;&lt;/span&gt;
     &lt;span class="fab-bar"&gt;&lt;/span&gt;
@@ -86,7 +86,7 @@
 &lt;/flying-menu&gt;</code></pre>
 
         <p><strong>CSS</strong></p>
-        <pre><code>flying-menu { --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+        <pre><code class="language-css">flying-menu { --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1); }
 
 /* Round gradient FAB */
 .fab {
@@ -134,7 +134,7 @@ flying-menu::part(menu) {
 }</code></pre>
 
         <p><strong>TypeScript</strong></p>
-        <pre><code>import '@igor-ganov/flying-menu'</code></pre>
+        <pre><code class="language-typescript">import '@igor-ganov/flying-menu'</code></pre>
       </section>
     </main>
 
