@@ -29,4 +29,4 @@ jobs:
       - run: bun install --frozen-lockfile
       # `prepublishOnly` runs typecheck + lint + unit tests + build first.
       # OIDC handles auth (no token); provenance is generated automatically.
-      - run: npm publish --access public --loglevel verbose
+      - run: npm publish --access public
