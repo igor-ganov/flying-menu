@@ -32,6 +32,21 @@
         </p>
       </header>
 
+      <section class="install" aria-label="Install">
+        <h2>Install</h2>
+        <div class="tabs" role="tablist" aria-label="Package manager">
+          <button role="tab" id="tab-npm" aria-controls="pm-npm" aria-selected="true">npm</button>
+          <button role="tab" id="tab-pnpm" aria-controls="pm-pnpm" aria-selected="false" tabindex="-1">pnpm</button>
+          <button role="tab" id="tab-yarn" aria-controls="pm-yarn" aria-selected="false" tabindex="-1">yarn</button>
+          <button role="tab" id="tab-bun" aria-controls="pm-bun" aria-selected="false" tabindex="-1">bun</button>
+        </div>
+        <pre id="pm-npm" role="tabpanel" aria-labelledby="tab-npm" tabindex="0"><code class="language-bash">npm install @igor-ganov/flying-menu</code></pre>
+        <pre id="pm-pnpm" role="tabpanel" aria-labelledby="tab-pnpm" tabindex="0" hidden><code class="language-bash">pnpm add @igor-ganov/flying-menu</code></pre>
+        <pre id="pm-yarn" role="tabpanel" aria-labelledby="tab-yarn" tabindex="0" hidden><code class="language-bash">yarn add @igor-ganov/flying-menu</code></pre>
+        <pre id="pm-bun" role="tabpanel" aria-labelledby="tab-bun" tabindex="0" hidden><code class="language-bash">bun add @igor-ganov/flying-menu</code></pre>
+        <p class="hint"><code>lit</code> is pulled in automatically — nothing else to install.</p>
+      </section>
+
       <section class="features" aria-label="Features">
         <article><h2>Drag &amp; snap</h2><p>Drag the trigger anywhere; it snaps to the nearest corner and remembers it.</p></article>
         <article><h2>Edge-aware popup</h2><p>The menu anchors to the trigger's corner and stays inside the viewport — computed from measured geometry.</p></article>
