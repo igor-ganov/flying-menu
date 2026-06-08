@@ -44,24 +44,64 @@ main {
   padding: clamp(2rem, 5vw, 5rem) 1.25rem 8rem;
 }
 
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.75rem;
-  color: var(--accent);
-  margin: 0 0 0.5rem;
-}
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  .eyebrow {
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    color: var(--accent);
+  }
 
-h1 {
-  font-size: clamp(2.5rem, 8vw, 4rem);
-  margin: 0 0 0.5rem;
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-}
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
 
-.lede {
-  font-size: 1.15rem;
-  color: var(--text);
-  max-width: 38rem;
+  .lede {
+    max-width: 38rem;
+    font-size: 1.15rem;
+  }
+
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 1.5rem 0 0.5rem;
+
+    .btn {
+      display: inline-block;
+      padding: 0.65rem 1.1rem;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+
+      &.btn-ghost {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text);
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+    }
+
+    @media (width < 28rem) {
+      .btn {
+        flex: 1 1 100%;
+        text-align: center;
+      }
+    }
+  }
 }
 
 .hint {
@@ -69,37 +109,7 @@ h1 {
   font-size: 0.95rem;
 }
 
-.cta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin: 1.5rem 0 0.5rem;
-}
-
-.btn {
-  display: inline-block;
-  padding: 0.65rem 1.1rem;
-  border-radius: 10px;
-  border: 1px solid transparent;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  color: #fff;
-  font: inherit;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-
-  &.btn-ghost {
-    background: transparent;
-    border-color: var(--border);
-    color: var(--text);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
-  }
-}
-
+/* ── Install (tabbed) ─────────────────────────────────────────────────── */
 .install {
   margin: 2.5rem 0 0;
 
@@ -114,11 +124,11 @@ h1 {
 
     button {
       appearance: none;
+      margin-bottom: -1px;
+      padding: 0.5rem 0.9rem;
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-      padding: 0.5rem 0.9rem;
       color: var(--muted);
       font: inherit;
       font-size: 0.9rem;
@@ -150,6 +160,7 @@ h1 {
   }
 }
 
+/* ── Features ─────────────────────────────────────────────────────────── */
 .features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
@@ -157,14 +168,14 @@ h1 {
   margin: 3rem 0;
 
   article {
+    padding: 1.1rem;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 1.1rem;
 
     h2 {
-      font-size: 1.05rem;
       margin: 0 0 0.35rem;
+      font-size: 1.05rem;
     }
 
     p {
@@ -175,6 +186,7 @@ h1 {
   }
 }
 
+/* ── Usage + code ─────────────────────────────────────────────────────── */
 .usage {
   h2 {
     margin-top: 2.5rem;
@@ -187,11 +199,11 @@ h1 {
 }
 
 pre {
+  padding: 1.1rem 1.25rem;
+  overflow: auto;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 1.1rem 1.25rem;
-  overflow: auto;
   font: 0.9rem/1.6 ui-monospace, Menlo, monospace;
 
   /* highlight.js fills the code element; let the pre surface show through. */
@@ -203,20 +215,20 @@ pre {
 
 code {
   font-family: ui-monospace, Menlo, monospace;
-}
 
-:not(pre) > code {
-  background: var(--surface-2);
-  padding: 0.1em 0.35em;
-  border-radius: 6px;
+  :not(pre) > & {
+    padding: 0.1em 0.35em;
+    background: var(--surface-2);
+    border-radius: 6px;
+  }
 }
 
 kbd {
+  padding: 0.05em 0.4em;
   background: var(--surface-2);
   border: 1px solid var(--border);
   border-bottom-width: 2px;
   border-radius: 6px;
-  padding: 0.05em 0.4em;
   font-size: 0.85em;
 }
 
@@ -227,11 +239,11 @@ kbd {
   margin-left: 0.25rem;
 
   button {
+    padding: 0.3rem 0.6rem;
     background: var(--surface-2);
     border: 1px solid var(--border);
-    color: var(--text);
     border-radius: 8px;
-    padding: 0.3rem 0.6rem;
+    color: var(--text);
     font: inherit;
     font-size: 0.85rem;
     cursor: pointer;
@@ -247,19 +259,19 @@ kbd {
   }
 }
 
-/* ---- Consumer styling of the headless component ---- */
+/* ── Consumer styling of the headless component ───────────────────────── */
 flying-menu {
   --flying-menu-transition: 200ms cubic-bezier(0.2, 0.8, 0.2, 1);
 
   &::part(menu) {
+    min-width: 13rem;
+    max-height: 80vh;
+    padding: 0.5rem;
+    overflow: auto;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 14px;
-    padding: 0.5rem;
     box-shadow: 0 16px 40px rgb(0 0 0 / 0.55);
-    min-width: 13rem;
-    max-height: 80vh;
-    overflow: auto;
   }
 }
 
@@ -267,12 +279,12 @@ flying-menu {
   position: relative;
   width: 56px;
   height: 56px;
-  border-radius: 50%;
+  padding: 0;
   border: none;
+  border-radius: 50%;
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   box-shadow: 0 8px 24px rgb(0 0 0 / 0.45);
   cursor: pointer;
-  padding: 0;
 
   &:focus-visible {
     outline: 3px solid #fff;
@@ -302,10 +314,14 @@ flying-menu {
   &:nth-child(3) {
     transform: translateY(7px) rotate(0);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 }
 
-/* Open state placed after the base rules. `open` reflects onto the host; the
-   bars are its light-DOM descendants. */
+/* `open` reflects onto the host; the bars are its light-DOM descendants. Placed
+   after the base rules so the open state wins. */
 flying-menu[open] .fab-bar {
   &:nth-child(1) {
     transform: translateY(0) rotate(45deg);
@@ -324,10 +340,10 @@ flying-menu[open] .fab-bar {
   flex-direction: column;
 
   a {
-    color: var(--text);
-    text-decoration: none;
     padding: 0.6rem 0.8rem;
     border-radius: 9px;
+    color: var(--text);
+    text-decoration: none;
 
     &:hover,
     &:focus-visible {
@@ -335,11 +351,5 @@ flying-menu[open] .fab-bar {
       outline: 2px solid var(--accent);
       outline-offset: -2px;
     }
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .fab-bar {
-    transition: none;
   }
 }
