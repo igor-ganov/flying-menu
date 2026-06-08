@@ -293,7 +293,10 @@ flying-menu {
 }
 
 /* Hamburger ↔ X: three centre-anchored bars spread by translateY. The transform
-   function list matches in both states, so it interpolates cleanly. */
+   function list matches in both states, so it interpolates cleanly. Each bar's
+   resting and `open` transform live together — `flying-menu[open] &` nests the
+   host's open state (the bars are its light-DOM descendants), and the nested
+   `:is(.fab-bar:nth-child(n))` outweighs the base rule, so order is irrelevant. */
 .fab-bar {
   position: absolute;
   top: 50%;
@@ -307,31 +310,26 @@ flying-menu {
 
   &:nth-child(1) {
     transform: translateY(-7px) rotate(0);
+    flying-menu[open] & {
+      transform: translateY(0) rotate(45deg);
+    }
   }
   &:nth-child(2) {
     transform: rotate(0);
+    flying-menu[open] & {
+      opacity: 0;
+      transform: rotate(45deg);
+    }
   }
   &:nth-child(3) {
     transform: translateY(7px) rotate(0);
+    flying-menu[open] & {
+      transform: translateY(0) rotate(-45deg);
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
     transition: none;
-  }
-}
-
-/* `open` reflects onto the host; the bars are its light-DOM descendants. Placed
-   after the base rules so the open state wins. */
-flying-menu[open] .fab-bar {
-  &:nth-child(1) {
-    transform: translateY(0) rotate(45deg);
-  }
-  &:nth-child(2) {
-    opacity: 0;
-    transform: rotate(45deg);
-  }
-  &:nth-child(3) {
-    transform: translateY(0) rotate(-45deg);
   }
 }
 

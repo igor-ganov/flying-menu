@@ -114,20 +114,29 @@
 }
 .fab:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
 
-/* Hamburger ↔ X (three centre-anchored bars) */
+/* Hamburger ↔ X (three centre-anchored bars). Each bar keeps its resting and
+   open transform together; `flying-menu[open] &` nests the host's open state. */
 .fab-bar {
   position: absolute; top: 50%; left: 50%;
   width: 24px; height: 2px; margin: -1px 0 0 -12px;
   border-radius: 1px; background: #fff;
   transition: transform 240ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 160ms ease;
+
+  &:nth-child(1) {
+    transform: translateY(-7px) rotate(0);
+    flying-menu[open] & { transform: translateY(0) rotate(45deg); }
+  }
+  &:nth-child(2) {
+    transform: rotate(0);
+    flying-menu[open] & { opacity: 0; transform: rotate(45deg); }
+  }
+  &:nth-child(3) {
+    transform: translateY(7px) rotate(0);
+    flying-menu[open] & { transform: translateY(0) rotate(-45deg); }
+  }
+
+  @media (prefers-reduced-motion: reduce) { transition: none; }
 }
-.fab-bar:nth-child(1) { transform: translateY(-7px) rotate(0); }
-.fab-bar:nth-child(2) { transform: rotate(0); }
-.fab-bar:nth-child(3) { transform: translateY(7px) rotate(0); }
-flying-menu[open] .fab-bar:nth-child(1) { transform: translateY(0) rotate(45deg); }
-flying-menu[open] .fab-bar:nth-child(2) { opacity: 0; transform: rotate(45deg); }
-flying-menu[open] .fab-bar:nth-child(3) { transform: translateY(0) rotate(-45deg); }
-@media (prefers-reduced-motion: reduce) { .fab-bar { transition: none; } }
 
 /* Popup (styled via the ::part hook) */
 flying-menu::part(menu) {
