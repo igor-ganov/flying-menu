@@ -9,6 +9,10 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      # Lets Codecov authenticate via OIDC — no stored upload token needed.
+      id-token: write
     steps:
       - uses: actions/checkout@v6
       - uses: oven-sh/setup-bun@v2
@@ -24,8 +28,9 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
+          use_oidc: true
           files: ./coverage/lcov.info
-          # Public-repo tokenless upload; a Codecov outage must not fail CI.
+          # A Codecov outage must not fail CI.
           fail_ci_if_error: false
 
   # Block PRs that introduce a dependency with a known high-severity advisory.
