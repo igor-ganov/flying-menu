@@ -13,6 +13,7 @@ dist-example/
 *.tsbuildinfo
 
 # Test artifacts
+coverage/
 test-results/
 playwright-report/
 blob-report/

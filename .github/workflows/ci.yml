@@ -19,8 +19,14 @@ jobs:
         run: bun run typecheck
       - name: Lint (functional-frontend rules)
         run: bun run lint
-      - name: Unit tests
-        run: bun run test
+      - name: Unit tests (with coverage)
+        run: bun run test:coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          # Public-repo tokenless upload; a Codecov outage must not fail CI.
+          fail_ci_if_error: false
 
   # Block PRs that introduce a dependency with a known high-severity advisory.
   dependency-review:
