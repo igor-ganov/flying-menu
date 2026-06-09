@@ -1,5 +1,13 @@
 # flying-menu
 
+[![npm version](https://img.shields.io/npm/v/@igor-ganov/flying-menu?logo=npm&color=cb3837)](https://www.npmjs.com/package/@igor-ganov/flying-menu)
+[![npm downloads](https://img.shields.io/npm/dm/@igor-ganov/flying-menu?logo=npm&color=cb3837)](https://www.npmjs.com/package/@igor-ganov/flying-menu)
+[![CI](https://github.com/igor-ganov/flying-menu/actions/workflows/ci.yml/badge.svg)](https://github.com/igor-ganov/flying-menu/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/igor-ganov/flying-menu/actions/workflows/codeql.yml/badge.svg)](https://github.com/igor-ganov/flying-menu/actions/workflows/codeql.yml)
+[![min+gzip size](https://img.shields.io/badge/min%2Bgzip-4.2%20kB-44cc11)](https://bundlephobia.com/package/@igor-ganov/flying-menu)
+[![types included](https://img.shields.io/npm/types/@igor-ganov/flying-menu?logo=typescript)](https://www.npmjs.com/package/@igor-ganov/flying-menu)
+[![license](https://img.shields.io/npm/l/@igor-ganov/flying-menu?color=blue)](./LICENSE)
+
 A **headless**, framework-agnostic [Lit](https://lit.dev) web component for a
 draggable, corner-snapping floating menu — the reusable extraction of the
 `useDraggableFab` + `MobileMenu` logic from `admin-website` / `public-website`.
