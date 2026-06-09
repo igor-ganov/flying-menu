@@ -21,3 +21,15 @@ jobs:
         run: bun run lint
       - name: Unit tests
         run: bun run test
+
+  # Block PRs that introduce a dependency with a known high-severity advisory.
+  dependency-review:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
